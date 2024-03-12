@@ -8,11 +8,23 @@ const { generarJWT } = require('../helpers/jwt.helper');
 //Obtener Usuarios
 const getUsuarios = async (request, response) =>{
 
-    const usuario = await Usuario.find( { vigente: true }, 'nombre email role google vigente');
+    const desde = Number(request.query.desde)  || 0;
+    let limit = 5;
+
+    if( desde == 0 ){
+        limit = 0
+    }
+
+    const [ usuarios, total ] = await Promise.all([
+        Usuario.find( { vigente: true }, 'nombre email role google vigente img').skip( desde )
+                                                                                .limit( limit ),
+        Usuario.countDocuments()
+    ])
 
     response.json({
         ok: true, 
-        usuario 
+        usuarios,
+        total 
     });
 }
 
@@ -54,7 +66,6 @@ const crearUsuario = async(request, response = response) =>{
 }
 
 const actualizarUsuario = async ( request, response = response ) => {
-    console.log( "ENTRA EN ACTUALIZAR" )
     const uid = request.params.id;
 
     try {
