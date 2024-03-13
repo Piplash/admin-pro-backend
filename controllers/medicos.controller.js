@@ -41,18 +41,52 @@ const crearMedico = async ( request, response = response ) =>{
 
 }
 
-const actualizarMedico = ( request, response = response ) =>{
-    response.json({
-        ok: true,
-        msg: 'actualizarMedico'
-    });
+const actualizarMedico = async ( request, response = response ) =>{
+
+    const idMedico = request.params.id;
+    const cambios = request.body;
+
+    try {
+
+        const medico = await Medico.findById(idMedico);
+        medico.nombre = cambios.nombre;
+
+        medico.save();
+
+        response.json({
+            ok: true,
+            msg: 'Medico actualizado',
+            medico
+        });
+    } catch (error) {
+        response.status(500).json({
+            ok: false,
+            msg: 'Error al actualizar el médico'
+        });
+    }
 }
 
-const borrarMedico = ( request, response = response ) =>{
-    response.json({
-        ok: true,
-        msg: 'borrarMedico'
-    });
+const borrarMedico = async ( request, response = response ) =>{
+
+    const idMedico = request.params.id;
+
+    try {
+
+        const medico = await Medico.findById(idMedico);
+        medico.vigente = false;
+
+        medico.save();
+
+        response.json({
+            ok: true,
+            msg: 'Médico borrado con éxito'
+        });
+    } catch (error) {
+        response.json({
+            ok: false,
+            msg: 'Error al borrar el médico'
+        });
+    }
 }
 
 module.exports = {

@@ -38,18 +38,57 @@ const crearHospital = async( request, response = response ) =>{
     
 }
 
-const actualizarHospital = ( request, response = response ) =>{
-    response.json({
-        ok: true,
-        msg: 'actualizarHospital'
-    })
+const actualizarHospital = async ( request, response = response ) =>{
+
+    
+    const idHospital = request.params.id;
+    const cambios = request.body;
+
+    try {
+
+        const hospital = await Hospital.findById(idHospital);
+        hospital.nombre = cambios.nombre;
+        hospital.save();
+
+        response.json({
+            ok: true,
+            msg: 'Hospital Actualizado',
+            hospital
+        });
+        
+    } catch (error) {
+        response.status(500).json({
+            ok: false,
+            msg: 'Fallo al actualizar el hospital'
+        });
+    }
+    
 }
 
-const borrarHospital = ( request, response = response ) =>{
-    response.json({
-        ok: true,
-        msg: 'borrarHospital'
-    })
+const borrarHospital = async ( request, response = response ) =>{
+
+    const idHospital = request.params.id;
+
+    try {
+
+        const hospital = await Hospital.findById(idHospital);
+        hospital.vigente = false;
+
+        hospital.save();
+
+        response.json({
+            ok: true,
+            msg: 'Hospital eliminado con éxito',
+            hospital
+        })
+        
+    } catch (error) {
+        response.status(500).json({
+            ok: false,
+            msg: 'Error al borrar el hospital'
+        })
+    }
+    
 }
 
 module.exports = {
