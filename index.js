@@ -11,6 +11,9 @@ const app = express();
 // Configurar CORS
 app.use(cors());
 
+// Front
+app.use( express.static('public') );
+
 //Lectura y parseo body
 app.use( express.json() );
 
